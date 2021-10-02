@@ -5648,13 +5648,9 @@ async function main() {
 function loadImgBase64(url) {
   return new Promise((resolve, reject) => {
     fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        var reader = new FileReader();
-        reader.onload = function () {
-          resolve(this.result);
-        };
-        reader.readAsDataURL(blob);
+      .then((response) => response.buffer())
+      .then((buffer) => {
+        resolve(buffer.toString("base64"));
       });
   });
 }
