@@ -1,5 +1,7 @@
 const core = require("@actions/core");
 const fetch = require("node-fetch");
+const Color = require("Color");
+const colorthief = require("colorthief");
 const { readFile, writeFile, readdir, unlink } = require("fs").promises;
 
 async function main() {
@@ -46,11 +48,18 @@ async function main() {
 
   console.log("Draw an img");
   let image = (await readFile(baseSvgPath)).toString("utf8");
+  const imgBuffer = await loadImgBuffer(dataSong.album.images[0].url);
+
+  const dominantColor = await getDominantColor(imgBuffer);
+  image = image.replace("{bgFill}", dominantColor.string());
+  image = image.replace(
+    /{textColorFill}/g,
+    dominantColor.isDark() ? "#c9d1d9" : "#24292f"
+  );
 
   image = image.replace(
     "{imgUrl}",
-    "data:image/jpeg;base64," +
-      (await loadImgBase64(dataSong.album.images[0].url))
+    "data:image/jpeg;base64," + imgBuffer.toString("base64")
   );
   image = image.replace("{songName}", dataSong.name);
   image = image.replace(
@@ -58,7 +67,6 @@ async function main() {
     dataSong.artists.map((v) => v.name).join(", ")
   );
 
-  // delete old image
   console.log("Remove old img file");
   const fileToDel = (await readdir(".")).filter((f) =>
     /^top-song-\d+\.svg$/.test(f)
@@ -74,10 +82,15 @@ async function main() {
 
   console.log("Write readme");
   let readme = (await readFile("README.md")).toString("utf8");
-  const imgTag = `<img src="${rawBasePath.replace(
+  let imgTag = `<img src="${rawBasePath.replace(
     /\/$/,
     ""
   )}/${fileName}" height="400"/>`;
+
+  if (dataSong.external_urls && dataSong.external_urls.spotify) {
+    imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`;
+  }
+
   readme = readme.replace(
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
     "<!-- spotify-listening-svg-start -->\n" +
@@ -88,14 +101,17 @@ async function main() {
   console.log("Complete");
 }
 
-function loadImgBase64(url) {
+function loadImgBuffer(url) {
   return new Promise((resolve, reject) => {
-    fetch(url)
-      .then((response) => response.buffer())
-      .then((buffer) => {
-        resolve(buffer.toString("base64"));
-      });
+    fetch(url, {}).then((response) => resolve(response.buffer()));
   });
+}
+
+async function getDominantColor(buffer) {
+  await writeFile("tempImg.jpg", buffer);
+  const result = await colorthief.getColor("tempImg.jpg", 1);
+  await unlink("tempImg.jpg");
+  return Color.rgb(result);
 }
 
 main().catch((err) => core.setFailed(err.message));

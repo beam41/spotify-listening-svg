@@ -11,7 +11,7 @@
     </clipPath>
   </defs>
 
-  <rect x="0" width="300" height="400" rx="4" fill="#21262d" />
+  <rect x="0" width="300" height="400" rx="4" fill="{bgFill}" />
 
   <image
     href="{imgUrl}"
@@ -25,7 +25,7 @@
   <text
     x="50%"
     y="316"
-    fill="#c9d1d9"
+    fill="{textColorFill}"
     font-family="Arial"
     dominant-baseline="hanging"
     text-anchor="middle"
@@ -37,7 +37,7 @@
   <text
     x="50%"
     y="356"
-    fill="#c9d1d9"
+    fill="{textColorFill}"
     font-family="Arial"
     dominant-baseline="hanging"
     text-anchor="middle"
