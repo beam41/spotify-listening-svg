@@ -58,11 +58,15 @@ async function main() {
     dataSong.artists.map((v) => v.name).join(", ")
   );
 
-// delete old image
-console.log("Remove old img file");
-readdir("/")
-  .filter(f => /^top-song-\d+\.svg$/.test(f))
-  .map(f => unlink(f))
+  // delete old image
+  console.log("Remove old img file");
+  const fileToDel = (await readdir("/")).filter((f) =>
+    /^top-song-\d+\.svg$/.test(f)
+  );
+
+  for await (const f of fileToDel) {
+    unlink(f);
+  }
 
   console.log("Write new img file");
   let fileName = `top-song-${Date.now()}.svg`;
@@ -81,7 +85,7 @@ readdir("/")
       "<!-- spotify-listening-svg-end -->\n"
   );
   await writeFile("README.md", readme);
-  console.log("Complete")
+  console.log("Complete");
 }
 
 function loadImgBase64(url) {
