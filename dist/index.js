@@ -5567,7 +5567,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(61);
 const fetch = __nccwpck_require__(656);
-const {readFile, writeFile} = __nccwpck_require__(747);
+const { readFile, writeFile } = __nccwpck_require__(747);
 const { promisify } = __nccwpck_require__(669);
 
 const readFileAsync = promisify(readFile);
@@ -5612,29 +5612,37 @@ async function main() {
     }
   );
 
+  console.log(resSong.json());
   const dataSong = await resSong.json().items[0];
   console.log("Song data fetched");
-
 
   console.log("Draw an img");
   let image = (await readFileAsync(baseSvgPath)).toString("utf8");
 
-  image = image.replace("{imgUrl}", await loadImgBase64(dataSong.album.images[0].url));
+  image = image.replace(
+    "{imgUrl}",
+    await loadImgBase64(dataSong.album.images[0].url)
+  );
   image = image.replace("{songName}", dataSong.name);
   image = image.replace(
     "{artistName}",
     dataSong.artists.map((v) => v.name).join(", ")
   );
 
-  let fileName = `top-song-${Date.now()}.svg`
-  writeFileAsync(fileName, image)
+  let fileName = `top-song-${Date.now()}.svg`;
+  writeFileAsync(fileName, image);
 
   console.log("Write readme");
   let readme = (await readFileAsync("README.md")).toString("utf8");
-  const imgTag = `<img src="${rawBasePath.replace(/\/$/, '')}/${fileName}" height="400"/>`
+  const imgTag = `<img src="${rawBasePath.replace(
+    /\/$/,
+    ""
+  )}/${fileName}" height="400"/>`;
   readme = readme.replace(
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
-    '<!-- spotify-listening-svg-start -->\n' + imgTag + '<!-- spotify-listening-svg-end -->\n'
+    "<!-- spotify-listening-svg-start -->\n" +
+      imgTag +
+      "<!-- spotify-listening-svg-end -->\n"
   );
 }
 
@@ -5645,7 +5653,7 @@ function loadImgBase64(url) {
       .then((blob) => {
         var reader = new FileReader();
         reader.onload = function () {
-            resolve(this.result);
+          resolve(this.result);
         };
         reader.readAsDataURL(blob);
       });
