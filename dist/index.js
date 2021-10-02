@@ -48352,10 +48352,7 @@ function loadImgBuffer(url) {
 
 async function getDominantColor(buffer) {
   await writeFile("tempImg.jpg", buffer);
-  const result = await colorthief.getColor(
-    "aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg",
-    1
-  );
+  const result = await colorthief.getColor("tempImg.jpg", 1);
   await unlink("tempImg.jpg");
   return Color.rgb(result);
 }
