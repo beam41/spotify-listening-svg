@@ -74,10 +74,14 @@ async function main() {
 
   console.log("Write readme");
   let readme = (await readFile("README.md")).toString("utf8");
-  const imgTag = `<img src="${rawBasePath.replace(
+  let imgTag = `<img src="${rawBasePath.replace(
     /\/$/,
     ""
   )}/${fileName}" height="400"/>`;
+  if (dataSong.external_urls?.spotify) {
+    imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`
+  }
+
   readme = readme.replace(
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
     "<!-- spotify-listening-svg-start -->\n" +
