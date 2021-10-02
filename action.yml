@@ -1,6 +1,9 @@
 name: "Spotify top song update"
 description: "Update the image of your top listening"
 inputs:
+  imgHeight:
+    description: "Height of the image"
+    required: true
   rawBasePath:
     description: "Base path for raw image"
     required: true
