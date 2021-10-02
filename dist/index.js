@@ -5627,7 +5627,7 @@ async function main() {
 
   // delete old image
   console.log("Remove old img file");
-  const fileToDel = (await readdir("/")).filter((f) =>
+  const fileToDel = (await readdir(".")).filter((f) =>
     /^top-song-\d+\.svg$/.test(f)
   );
 
