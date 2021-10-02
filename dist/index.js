@@ -5645,7 +5645,7 @@ async function main() {
     /\/$/,
     ""
   )}/${fileName}" height="400"/>`;
-  if (dataSong.external_urls?.spotify) {
+  if (dataSong.external_urls && dataSong.external_urls.spotify) {
     imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`
   }
 
