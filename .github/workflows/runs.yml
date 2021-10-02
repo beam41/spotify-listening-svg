@@ -1,0 +1,33 @@
+on:
+  push:
+    paths:
+      - 'dist/**'
+
+jobs:
+  spotify-to-readme-job:
+    runs-on: ubuntu-latest
+    name: Write Spotify songs to readme
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Get info from Spotify and write new readme
+        id: spotify
+        uses: beam41/spotify-listening-svg@dev
+        with:
+          rawBasePath: https://raw.githubusercontent.com/beam41/spotify-listening-svg/dev/
+          baseSvgPath: ./base.svg
+          token: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+          clientId: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          cliSecret: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+      - name: Commit file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Update Spotify data to readme" -a
+      - name: Push change
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

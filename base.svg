@@ -1,0 +1,48 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 300 400"
+  height="400px"
+>
+  <defs>
+    <rect id="imgClipRect" x="16" y="16" width="268" height="268" rx="4" />
+    <clipPath id="imgClip">
+      <use xlink:href="#imgClipRect" />
+    </clipPath>
+  </defs>
+
+  <rect x="0" width="300" height="400" rx="4" fill="#21262d" />
+
+  <image
+    href="{imgUrl}"
+    x="16"
+    y="16"
+    width="268"
+    height="268"
+    rx="4"
+    clip-path="url(#imgClip)"
+  />
+  <text
+    x="50%"
+    y="316"
+    fill="#c9d1d9"
+    font-family="Arial"
+    dominant-baseline="hanging"
+    text-anchor="middle"
+    font-size="18"
+    font-weight="600"
+  >
+    {songName}
+  </text>
+  <text
+    x="50%"
+    y="356"
+    fill="#c9d1d9"
+    font-family="Arial"
+    dominant-baseline="hanging"
+    text-anchor="middle"
+    font-size="16"
+  >
+    {artistName}
+  </text>
+</svg>
