@@ -62,7 +62,7 @@ async function main() {
   );
 
   let fileName = `top-song-${Date.now()}.svg`;
-  writeFileAsync(fileName, image);
+  await writeFileAsync(fileName, image);
 
   console.log("Write readme");
   let readme = (await readFileAsync("README.md")).toString("utf8");
@@ -76,6 +76,7 @@ async function main() {
       imgTag +
       "<!-- spotify-listening-svg-end -->\n"
   );
+  await writeFileAsync("README.md", readme);
 }
 
 function loadImgBase64(url) {
