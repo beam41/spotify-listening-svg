@@ -82,7 +82,7 @@ async function main() {
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
     "<!-- spotify-listening-svg-start -->\n" +
       `<p align="center">${imgTag}</p>\n` +
-      "<!-- spotify-listening-svg-end -->\n"
+      "<!-- spotify-listening-svg-end -->"
   );
   await writeFile("README.md", readme);
   console.log("Complete");
