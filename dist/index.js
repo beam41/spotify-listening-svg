@@ -48248,6 +48248,7 @@ const colorthief = __nccwpck_require__(3333);
 const { readFile, writeFile, readdir, unlink } = __nccwpck_require__(5747).promises;
 
 async function main() {
+  const imgHeight = core.getInput("imgHeight", { required: true });
   const rawBasePath = core.getInput("rawBasePath", { required: true });
   const baseSvgPath = core.getInput("baseSvgPath", { required: true });
   const token = core.getInput("token", { required: true });
@@ -48328,7 +48329,7 @@ async function main() {
   let imgTag = `<img src="${rawBasePath.replace(
     /\/$/,
     ""
-  )}/${fileName}" height="400"/>`;
+  )}/${fileName}" height="${imgHeight}"/>`;
 
   if (dataSong.external_urls && dataSong.external_urls.spotify) {
     imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`;
