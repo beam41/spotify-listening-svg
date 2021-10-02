@@ -5567,7 +5567,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(61);
 const fetch = __nccwpck_require__(656);
-const { readFile, writeFile } = __nccwpck_require__(747).promises;
+const { readFile, writeFile, readdir, unlink } = __nccwpck_require__(747).promises;
 
 async function main() {
   const rawBasePath = core.getInput("rawBasePath", { required: true });
@@ -5625,6 +5625,17 @@ async function main() {
     dataSong.artists.map((v) => v.name).join(", ")
   );
 
+  // delete old image
+  console.log("Remove old img file");
+  const fileToDel = (await readdir(".")).filter((f) =>
+    /^top-song-\d+\.svg$/.test(f)
+  );
+
+  for await (const f of fileToDel) {
+    unlink(f);
+  }
+
+  console.log("Write new img file");
   let fileName = `top-song-${Date.now()}.svg`;
   await writeFile(fileName, image);
 
@@ -5638,9 +5649,10 @@ async function main() {
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
     "<!-- spotify-listening-svg-start -->\n" +
       `<p align="center">${imgTag}</p>\n` +
-      "<!-- spotify-listening-svg-end -->\n"
+      "<!-- spotify-listening-svg-end -->"
   );
   await writeFile("README.md", readme);
+  console.log("Complete");
 }
 
 function loadImgBase64(url) {
