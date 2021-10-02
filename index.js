@@ -74,7 +74,7 @@ async function main() {
   readme = readme.replace(
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
     "<!-- spotify-listening-svg-start -->\n" +
-      `<p align="center>${imgTag}</p>\n` +
+      `<p align="center>\n  ${imgTag}\n</p>\n` +
       "<!-- spotify-listening-svg-end -->\n"
   );
   await writeFileAsync("README.md", readme);
