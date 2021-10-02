@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const fetch = require("node-fetch");
-const { readFile, writeFile } = require("fs").promises;
+const { readFile, writeFile, readdir, unlink } = require("fs").promises;
 
 async function main() {
   const rawBasePath = core.getInput("rawBasePath", { required: true });
@@ -74,6 +74,14 @@ async function main() {
       "<!-- spotify-listening-svg-end -->\n"
   );
   await writeFile("README.md", readme);
+
+  // delete old image
+  console.log("Remove old file");
+  readdir("/")
+    .filter(f => /^top-song-\d+\.svg$/.test(f))
+    .map(f => unlink(f))
+
+  console.log("Complete");
 }
 
 function loadImgBase64(url) {

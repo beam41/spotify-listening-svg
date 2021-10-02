@@ -5567,7 +5567,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(61);
 const fetch = __nccwpck_require__(656);
-const { readFile, writeFile } = __nccwpck_require__(747).promises;
+const { readFile, writeFile, readdir, unlink } = __nccwpck_require__(747).promises;
 
 async function main() {
   const rawBasePath = core.getInput("rawBasePath", { required: true });
@@ -5641,6 +5641,14 @@ async function main() {
       "<!-- spotify-listening-svg-end -->\n"
   );
   await writeFile("README.md", readme);
+
+  // delete old image
+  console.log("Remove old file");
+  readdir("/")
+    .filter(f => /^top-song-\d+\.svg$/.test(f))
+    .map(f => unlink(f))
+
+  console.log("Complete");
 }
 
 function loadImgBase64(url) {
