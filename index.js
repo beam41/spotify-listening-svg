@@ -53,7 +53,8 @@ async function main() {
 
   image = image.replace(
     "{imgUrl}",
-    await loadImgBase64(dataSong.album.images[0].url)
+    "data:image/jpeg;base64," +
+      (await loadImgBase64(dataSong.album.images[0].url))
   );
   image = image.replace("{songName}", dataSong.name);
   image = image.replace(
