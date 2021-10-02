@@ -18,7 +18,7 @@ jobs:
         id: spotify
         uses: beam41/spotify-listening-svg@dev
         with:
-          rawBasePath: https://raw.githubusercontent.com/beam41/spotify-listening-svg/${{ github.ref }}/
+          rawBasePath: https://raw.githubusercontent.com/beam41/spotify-listening-svg/dev/
           baseSvgPath: ./base.svg
           token: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
           clientId: ${{ secrets.SPOTIFY_CLIENT_ID }}
