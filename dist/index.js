@@ -48233,179 +48233,134 @@ module.exports = require("zlib");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(4061);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7656);
-/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(node_fetch__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var Color__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(4424);
-/* harmony import */ var Color__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(Color__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var colorthief__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(3333);
-/* harmony import */ var colorthief__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(colorthief__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(5747);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_4__);
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __asyncValues = (undefined && undefined.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
+const core = __nccwpck_require__(4061);
+const fetch = __nccwpck_require__(7656);
+const Color = __nccwpck_require__(4424);
+const colorthief = __nccwpck_require__(3333);
+const { readFile, writeFile, readdir, unlink } = __nccwpck_require__(5747).promises;
 
+async function main() {
+  const rawBasePath = core.getInput("rawBasePath", { required: true });
+  const baseSvgPath = core.getInput("baseSvgPath", { required: true });
+  const token = core.getInput("token", { required: true });
+  const clientId = core.getInput("clientId", { required: true });
+  const cliSecret = core.getInput("cliSecret", { required: true });
 
+  // access token expired quickly so I have to use refresh token to get access token first
+  console.log("Getting access token..");
+  const secret = `${clientId}:${cliSecret}`;
+  const secretBase64 = Buffer.from(secret).toString("base64");
+  const tokenRequest = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Basic ${secretBase64}`,
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: token,
+    }),
+  });
+  const tokenRequestData = await tokenRequest.json();
+  console.log("Access token received");
 
+  // songs
+  console.log("Fetch song data");
+  const resSong = await fetch(
+    "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1",
+    {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenRequestData.access_token}`,
+      },
+    }
+  );
 
+  const dataSong = (await resSong.json()).items[0];
+  console.log("Song data fetched");
 
-const { readFile, writeFile, readdir, unlink } = (fs__WEBPACK_IMPORTED_MODULE_4___default().promises);
-function main() {
-    var e_1, _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const rawBasePath = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("rawBasePath", { required: true });
-        const baseSvgPath = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("baseSvgPath", { required: true });
-        const token = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("token", { required: true });
-        const clientId = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("clientId", { required: true });
-        const cliSecret = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("cliSecret", { required: true });
-        // access token expired quickly so I have to use refresh token to get access token first
-        console.log("Getting access token..");
-        const secret = `${clientId}:${cliSecret}`;
-        const secretBase64 = Buffer.from(secret).toString("base64");
-        const tokenRequest = yield node_fetch__WEBPACK_IMPORTED_MODULE_1___default()("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: `Basic ${secretBase64}`,
-            },
-            body: new URLSearchParams({
-                grant_type: "refresh_token",
-                refresh_token: token,
-            }),
-        });
-        const tokenRequestData = yield tokenRequest.json();
-        console.log("Access token received");
-        // songs
-        console.log("Fetch song data");
-        const resSong = yield node_fetch__WEBPACK_IMPORTED_MODULE_1___default()("https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1", {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenRequestData.access_token}`,
-            },
-        });
-        const dataSong = (yield resSong.json()).items[0];
-        console.log("Song data fetched");
-        console.log("Draw an img");
-        let image = (yield readFile(baseSvgPath)).toString("utf8");
-        const imgBuffer = yield loadImgBuffer(dataSong.album.images[0].url);
-        const dominantColor = yield getDominantColor(imgBuffer);
-        image = image.replace("{bgFill}", dominantColor.string());
-        image = image.replace(/{textColorFill}/g, dominantColor.isDark() ? "#c9d1d9" : "#24292f");
-        image = image.replace("{imgUrl}", "data:image/jpeg;base64," + imgBuffer.toString("base64"));
-        image = image.replace("{songName}", dataSong.name);
-        image = image.replace("{artistName}", dataSong.artists.map((v) => v.name).join(", "));
-        console.log("Remove old img file");
-        const fileToDel = (yield readdir(".")).filter((f) => /^top-song-\d+\.svg$/.test(f));
-        try {
-            for (var fileToDel_1 = __asyncValues(fileToDel), fileToDel_1_1; fileToDel_1_1 = yield fileToDel_1.next(), !fileToDel_1_1.done;) {
-                const f = fileToDel_1_1.value;
-                unlink(f);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (fileToDel_1_1 && !fileToDel_1_1.done && (_a = fileToDel_1.return)) yield _a.call(fileToDel_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        console.log("Write new img file");
-        let fileName = `top-song-${Date.now()}.svg`;
-        yield writeFile(fileName, image);
-        console.log("Write readme");
-        let readme = (yield readFile("README.md")).toString("utf8");
-        let imgTag = `<img src="${rawBasePath.replace(/\/$/, "")}/${fileName}" height="400"/>`;
-        if (dataSong.external_urls && dataSong.external_urls.spotify) {
-            imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`;
-        }
-        readme = readme.replace(/<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi, "<!-- spotify-listening-svg-start -->\n" +
-            `<p align="center">${imgTag}</p>\n` +
-            "<!-- spotify-listening-svg-end -->");
-        yield writeFile("README.md", readme);
-        console.log("Complete");
-    });
+  console.log("Draw an img");
+  let image = (await readFile(baseSvgPath)).toString("utf8");
+  const imgBuffer = await loadImgBuffer(dataSong.album.images[0].url);
+
+  const dominantColor = await getDominantColor(imgBuffer);
+  image = image.replace("{bgFill}", dominantColor.string());
+  image = image.replace(
+    /{textColorFill}/g,
+    dominantColor.isDark() ? "#c9d1d9" : "#24292f"
+  );
+
+  image = image.replace(
+    "{imgUrl}",
+    "data:image/jpeg;base64," + imgBuffer.toString("base64")
+  );
+  image = image.replace("{songName}", dataSong.name);
+  image = image.replace(
+    "{artistName}",
+    dataSong.artists.map((v) => v.name).join(", ")
+  );
+
+  console.log("Remove old img file");
+  const fileToDel = (await readdir(".")).filter((f) =>
+    /^top-song-\d+\.svg$/.test(f)
+  );
+
+  for await (const f of fileToDel) {
+    unlink(f);
+  }
+
+  console.log("Write new img file");
+  let fileName = `top-song-${Date.now()}.svg`;
+  await writeFile(fileName, image);
+
+  console.log("Write readme");
+  let readme = (await readFile("README.md")).toString("utf8");
+  let imgTag = `<img src="${rawBasePath.replace(
+    /\/$/,
+    ""
+  )}/${fileName}" height="400"/>`;
+
+  if (dataSong.external_urls && dataSong.external_urls.spotify) {
+    imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`;
+  }
+
+  readme = readme.replace(
+    /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
+    "<!-- spotify-listening-svg-start -->\n" +
+      `<p align="center">${imgTag}</p>\n` +
+      "<!-- spotify-listening-svg-end -->"
+  );
+  await writeFile("README.md", readme);
+  console.log("Complete");
 }
+
 function loadImgBuffer(url) {
-    return new Promise((resolve, reject) => {
-        node_fetch__WEBPACK_IMPORTED_MODULE_1___default()(url, {}).then((response) => resolve(response.buffer()));
-    });
+  return new Promise((resolve, reject) => {
+    fetch(url, {}).then((response) => resolve(response.buffer()));
+  });
 }
-function getDominantColor(buffer) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield writeFile("tempImg.jpg", buffer);
-        const result = yield colorthief__WEBPACK_IMPORTED_MODULE_3___default().getColor("aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg", 1);
-        yield unlink("tempImg.jpg");
-        return Color__WEBPACK_IMPORTED_MODULE_2___default().rgb(result);
-    });
+
+async function getDominantColor(buffer) {
+  await writeFile("tempImg.jpg", buffer);
+  const result = await colorthief.getColor(
+    "aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg",
+    1
+  );
+  await unlink("tempImg.jpg");
+  return Color.rgb(result);
 }
-main().catch((err) => _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(err.message));
+
+main().catch((err) => core.setFailed(err.message));
 
 })();
 

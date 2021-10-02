@@ -1,9 +1,8 @@
-import core from "@actions/core";
-import fetch from "node-fetch";
-import Color from "Color";
-import colorthief from "colorthief";
-import fs from "fs";
-const { readFile, writeFile, readdir, unlink } = fs.promises;
+const core = require("@actions/core");
+const fetch = require("node-fetch");
+const Color = require("Color");
+const colorthief = require("colorthief");
+const { readFile, writeFile, readdir, unlink } = require("fs").promises;
 
 async function main() {
   const rawBasePath = core.getInput("rawBasePath", { required: true });
@@ -102,13 +101,13 @@ async function main() {
   console.log("Complete");
 }
 
-function loadImgBuffer(url): Promise<Buffer> {
+function loadImgBuffer(url) {
   return new Promise((resolve, reject) => {
     fetch(url, {}).then((response) => resolve(response.buffer()));
   });
 }
 
-async function getDominantColor(buffer: Buffer) {
+async function getDominantColor(buffer) {
   await writeFile("tempImg.jpg", buffer);
   const result = await colorthief.getColor(
     "aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg",
