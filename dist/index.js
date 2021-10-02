@@ -5567,11 +5567,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(61);
 const fetch = __nccwpck_require__(656);
-const { readFile, writeFile } = __nccwpck_require__(747);
-const { promisify } = __nccwpck_require__(669);
-
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
+const { readFile, writeFile } = __nccwpck_require__(747).promises;
 
 async function main() {
   const rawBasePath = core.getInput("rawBasePath", { required: true });
@@ -5616,7 +5612,7 @@ async function main() {
   console.log("Song data fetched");
 
   console.log("Draw an img");
-  let image = (await readFileAsync(baseSvgPath)).toString("utf8");
+  let image = (await readFile(baseSvgPath)).toString("utf8");
 
   image = image.replace(
     "{imgUrl}",
@@ -5630,10 +5626,10 @@ async function main() {
   );
 
   let fileName = `top-song-${Date.now()}.svg`;
-  await writeFileAsync(fileName, image);
+  await writeFile(fileName, image);
 
   console.log("Write readme");
-  let readme = (await readFileAsync("README.md")).toString("utf8");
+  let readme = (await readFile("README.md")).toString("utf8");
   const imgTag = `<img src="${rawBasePath.replace(
     /\/$/,
     ""
@@ -5641,10 +5637,10 @@ async function main() {
   readme = readme.replace(
     /<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi,
     "<!-- spotify-listening-svg-start -->\n" +
-      imgTag +
+      `<p align="center">${imgTag}</p>\n` +
       "<!-- spotify-listening-svg-end -->\n"
   );
-  await writeFileAsync("README.md", readme);
+  await writeFile("README.md", readme);
 }
 
 function loadImgBase64(url) {
