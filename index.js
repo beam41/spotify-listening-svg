@@ -45,7 +45,7 @@ async function main() {
     }
   );
 
-  console.log(resSong.json());
+  console.log(await resSong.json());
   const dataSong = await resSong.json().items[0];
   console.log("Song data fetched");
 
