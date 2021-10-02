@@ -2,6 +2,7 @@ on:
   push:
     paths:
       - 'dist/**'
+      - '.github/**'
 
 jobs:
   spotify-to-readme-job:
