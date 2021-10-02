@@ -48282,24 +48282,17 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(4061);
-var core_default = /*#__PURE__*/__nccwpck_require__.n(core);
-// EXTERNAL MODULE: ./node_modules/node-fetch/lib/index.js
-var lib = __nccwpck_require__(7656);
-var lib_default = /*#__PURE__*/__nccwpck_require__.n(lib);
-// EXTERNAL MODULE: ./node_modules/Color/index.js
-var Color = __nccwpck_require__(4424);
-var Color_default = /*#__PURE__*/__nccwpck_require__.n(Color);
-// EXTERNAL MODULE: ./node_modules/colorthief/dist/color-thief.js
-var color_thief = __nccwpck_require__(3333);
-var color_thief_default = /*#__PURE__*/__nccwpck_require__.n(color_thief);
-;// CONCATENATED MODULE: external "fs/promises"
-const promises_namespaceObject = require("fs/promises");
-;// CONCATENATED MODULE: ./index.ts
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(4061);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7656);
+/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(node_fetch__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var Color__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(4424);
+/* harmony import */ var Color__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(Color__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var colorthief__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(3333);
+/* harmony import */ var colorthief__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(colorthief__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(5747);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_4__);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -48321,19 +48314,20 @@ var __asyncValues = (undefined && undefined.__asyncValues) || function (o) {
 
 
 
+const { readFile, writeFile, readdir, unlink } = (fs__WEBPACK_IMPORTED_MODULE_4___default().promises);
 function main() {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const rawBasePath = core_default().getInput("rawBasePath", { required: true });
-        const baseSvgPath = core_default().getInput("baseSvgPath", { required: true });
-        const token = core_default().getInput("token", { required: true });
-        const clientId = core_default().getInput("clientId", { required: true });
-        const cliSecret = core_default().getInput("cliSecret", { required: true });
+        const rawBasePath = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("rawBasePath", { required: true });
+        const baseSvgPath = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("baseSvgPath", { required: true });
+        const token = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("token", { required: true });
+        const clientId = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("clientId", { required: true });
+        const cliSecret = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("cliSecret", { required: true });
         // access token expired quickly so I have to use refresh token to get access token first
         console.log("Getting access token..");
         const secret = `${clientId}:${cliSecret}`;
         const secretBase64 = Buffer.from(secret).toString("base64");
-        const tokenRequest = yield lib_default()("https://accounts.spotify.com/api/token", {
+        const tokenRequest = yield node_fetch__WEBPACK_IMPORTED_MODULE_1___default()("https://accounts.spotify.com/api/token", {
             method: "POST",
             headers: {
                 Accept: "application/json",
@@ -48349,7 +48343,7 @@ function main() {
         console.log("Access token received");
         // songs
         console.log("Fetch song data");
-        const resSong = yield lib_default()("https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1", {
+        const resSong = yield node_fetch__WEBPACK_IMPORTED_MODULE_1___default()("https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1", {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -48359,21 +48353,20 @@ function main() {
         const dataSong = (yield resSong.json()).items[0];
         console.log("Song data fetched");
         console.log("Draw an img");
-        let image = (yield (0,promises_namespaceObject.readFile)(baseSvgPath)).toString("utf8");
+        let image = (yield readFile(baseSvgPath)).toString("utf8");
         const imgBuffer = yield loadImgBuffer(dataSong.album.images[0].url);
         const dominantColor = yield getDominantColor(imgBuffer);
         image = image.replace("{bgFill}", dominantColor.string());
-        image = image.replace(/{textColorFill}/g, dominantColor.isDark() ? '#c9d1d9' : '#24292f');
-        image = image.replace("{imgUrl}", "data:image/jpeg;base64," +
-            imgBuffer.toString("base64"));
+        image = image.replace(/{textColorFill}/g, dominantColor.isDark() ? "#c9d1d9" : "#24292f");
+        image = image.replace("{imgUrl}", "data:image/jpeg;base64," + imgBuffer.toString("base64"));
         image = image.replace("{songName}", dataSong.name);
         image = image.replace("{artistName}", dataSong.artists.map((v) => v.name).join(", "));
         console.log("Remove old img file");
-        const fileToDel = (yield (0,promises_namespaceObject.readdir)(".")).filter((f) => /^top-song-\d+\.svg$/.test(f));
+        const fileToDel = (yield readdir(".")).filter((f) => /^top-song-\d+\.svg$/.test(f));
         try {
             for (var fileToDel_1 = __asyncValues(fileToDel), fileToDel_1_1; fileToDel_1_1 = yield fileToDel_1.next(), !fileToDel_1_1.done;) {
                 const f = fileToDel_1_1.value;
-                (0,promises_namespaceObject.unlink)(f);
+                unlink(f);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -48385,9 +48378,9 @@ function main() {
         }
         console.log("Write new img file");
         let fileName = `top-song-${Date.now()}.svg`;
-        yield (0,promises_namespaceObject.writeFile)(fileName, image);
+        yield writeFile(fileName, image);
         console.log("Write readme");
-        let readme = (yield (0,promises_namespaceObject.readFile)("README.md")).toString("utf8");
+        let readme = (yield readFile("README.md")).toString("utf8");
         let imgTag = `<img src="${rawBasePath.replace(/\/$/, "")}/${fileName}" height="400"/>`;
         if (dataSong.external_urls && dataSong.external_urls.spotify) {
             imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`;
@@ -48395,24 +48388,24 @@ function main() {
         readme = readme.replace(/<!-- *spotify-listening-svg-start *-->[^]*<!-- *spotify-listening-svg-end *-->/gi, "<!-- spotify-listening-svg-start -->\n" +
             `<p align="center">${imgTag}</p>\n` +
             "<!-- spotify-listening-svg-end -->");
-        yield (0,promises_namespaceObject.writeFile)("README.md", readme);
+        yield writeFile("README.md", readme);
         console.log("Complete");
     });
 }
 function loadImgBuffer(url) {
     return new Promise((resolve, reject) => {
-        lib_default()(url, {}).then((response) => resolve(response.buffer()));
+        node_fetch__WEBPACK_IMPORTED_MODULE_1___default()(url, {}).then((response) => resolve(response.buffer()));
     });
 }
 function getDominantColor(buffer) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0,promises_namespaceObject.writeFile)("tempImg.jpg", buffer);
-        const result = yield color_thief_default().getColor("aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg", 1);
-        yield (0,promises_namespaceObject.unlink)("tempImg.jpg");
-        return Color_default().rgb(result);
+        yield writeFile("tempImg.jpg", buffer);
+        const result = yield colorthief__WEBPACK_IMPORTED_MODULE_3___default().getColor("aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg", 1);
+        yield unlink("tempImg.jpg");
+        return Color__WEBPACK_IMPORTED_MODULE_2___default().rgb(result);
     });
 }
-main().catch((err) => core_default().setFailed(err.message));
+main().catch((err) => _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(err.message));
 
 })();
 

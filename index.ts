@@ -1,8 +1,9 @@
 import core from "@actions/core";
 import fetch from "node-fetch";
 import Color from "Color";
-import colorthief from 'colorthief';
-import { readFile, writeFile, readdir, unlink } from "fs/promises";
+import colorthief from "colorthief";
+import fs from "fs";
+const { readFile, writeFile, readdir, unlink } = fs.promises;
 
 async function main() {
   const rawBasePath = core.getInput("rawBasePath", { required: true });
@@ -48,16 +49,18 @@ async function main() {
 
   console.log("Draw an img");
   let image = (await readFile(baseSvgPath)).toString("utf8");
-  const imgBuffer = await loadImgBuffer(dataSong.album.images[0].url)
+  const imgBuffer = await loadImgBuffer(dataSong.album.images[0].url);
 
   const dominantColor = await getDominantColor(imgBuffer);
   image = image.replace("{bgFill}", dominantColor.string());
-  image = image.replace(/{textColorFill}/g, dominantColor.isDark() ? '#c9d1d9' : '#24292f');
+  image = image.replace(
+    /{textColorFill}/g,
+    dominantColor.isDark() ? "#c9d1d9" : "#24292f"
+  );
 
   image = image.replace(
     "{imgUrl}",
-    "data:image/jpeg;base64," +
-    imgBuffer.toString("base64")
+    "data:image/jpeg;base64," + imgBuffer.toString("base64")
   );
   image = image.replace("{songName}", dataSong.name);
   image = image.replace(
@@ -86,7 +89,7 @@ async function main() {
   )}/${fileName}" height="400"/>`;
 
   if (dataSong.external_urls && dataSong.external_urls.spotify) {
-    imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`
+    imgTag = `<a href="${dataSong.external_urls.spotify}">${imgTag}</a>`;
   }
 
   readme = readme.replace(
@@ -106,10 +109,13 @@ function loadImgBuffer(url): Promise<Buffer> {
 }
 
 async function getDominantColor(buffer: Buffer) {
-  await writeFile("tempImg.jpg", buffer)
-  const result = await colorthief.getColor("aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg", 1)
-  await unlink("tempImg.jpg")
-  return Color.rgb(result)
+  await writeFile("tempImg.jpg", buffer);
+  const result = await colorthief.getColor(
+    "aHR0cDovL2ltYWdlLmpvb3guY29tL0pPT1hjb3Zlci8wL2YzMmYyYjg4ZTlmMzQ3MDMvNjQwLmpwZw==.jpg",
+    1
+  );
+  await unlink("tempImg.jpg");
+  return Color.rgb(result);
 }
 
 main().catch((err) => core.setFailed(err.message));
