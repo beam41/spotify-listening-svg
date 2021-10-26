@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const fetch = require("node-fetch");
-const Color = require("Color");
+const Color = require("color");
 const colorthief = require("colorthief");
 const { readFile, writeFile, readdir, unlink } = require("fs").promises;
 const { createCanvas } = require('canvas')
