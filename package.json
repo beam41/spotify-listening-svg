@@ -21,7 +21,7 @@
     "@actions/core": "^1.2.4",
     "@actions/github": "^4.0.0",
     "canvas": "^2.8.0",
-    "color": "^4.0.1",
+    "color": "^3.2.0",
     "colorthief": "^2.3.2",
     "node-fetch": "^2.6.0"
   },
