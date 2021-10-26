@@ -3,9 +3,14 @@ const fetch = require("node-fetch");
 const Color = require("Color");
 const colorthief = require("colorthief");
 const { readFile, writeFile, readdir, unlink } = require("fs").promises;
+const { createCanvas } = require('canvas')
 
 async function main() {
   const imgHeight = core.getInput("imgHeight", { required: true });
+  const txtFont = core.getInput("txtFont", { required: true });
+  const txtFontSizeSong = core.getInput("txtFontSizeSong", { required: true });
+  const txtFontSizeArtist = core.getInput("txtFontSizeArtist", { required: true });
+  const txtMaxWidth = core.getInput("txtMaxWidth", { required: true });
   const rawBasePath = core.getInput("rawBasePath", { required: true });
   const baseSvgPath = core.getInput("baseSvgPath", { required: true });
   const token = core.getInput("token", { required: true });
@@ -62,10 +67,10 @@ async function main() {
     "{imgUrl}",
     "data:image/jpeg;base64," + imgBuffer.toString("base64")
   );
-  image = image.replace("{songName}", dataSong.name);
+  image = image.replace("{songName}", fitText(dataSong.name, txtFont, txtFontSizeSong, txtMaxWidth));
   image = image.replace(
     "{artistName}",
-    dataSong.artists.map((v) => v.name).join(", ")
+    fitText(dataSong.artists.map((v) => v.name).join(", "), txtFont, txtFontSizeArtist, txtMaxWidth)
   );
 
   console.log("Remove old img file");
@@ -113,6 +118,21 @@ async function getDominantColor(buffer) {
   const result = await colorthief.getColor("tempImg.jpg", 1);
   await unlink("tempImg.jpg");
   return Color.rgb(result);
+}
+
+function fitText(text, font, fontSize, maxWidth) {
+  const canvas = createCanvas(maxWidth, fontSize)
+  const ctx = canvas.getContext('2d');
+  ctx.font = `bold ${fontSize}px ${font}`;
+  let ellipsis = false;
+  while (true) {
+      const currWidth = ctx.measureText(text + (ellipsis ? "..." : "")).width;
+      if (currWidth <= maxWidth) {
+          return text + (ellipsis ? "..." : "")
+      }
+      text = text.substring(0, text.length - 1)
+      ellipsis = true
+  }
 }
 
 main().catch((err) => core.setFailed(err.message));

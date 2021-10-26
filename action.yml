@@ -4,6 +4,18 @@ inputs:
   imgHeight:
     description: "Height of the image"
     required: true
+  txtFont:
+    description: "Font of the text label"
+    required: true
+  txtFontSizeSong:
+    description: "Font size for song name label"
+    required: true
+  txtFontSizeArtist:
+    description: "Font size for artist name label"
+    required: true
+  txtMaxWidth:
+    description: "Maximum width for text label"
+    required: true
   rawBasePath:
     description: "Base path for raw image"
     required: true
