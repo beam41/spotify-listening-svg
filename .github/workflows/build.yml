@@ -16,8 +16,10 @@ jobs:
         uses: actions/setup-node@main
         with:
           node-version: 12
+      - name: Add apt lib
+        run: sudo apt-get install build-essential libcairo2-dev libpango1.0-dev
       - name: Install Node modules
-        run: npm install
+        run: npm install --build-from-source
       - name: Install ncc
         run: npm i -g @vercel/ncc
       - name: Build dist
