@@ -6,7 +6,7 @@ on:
 
 jobs:
   spotify-to-readme-job:
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
     name: Write Spotify songs to readme
     steps:
       - name: Checkout
