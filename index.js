@@ -7,7 +7,6 @@ const { createCanvas } = require('canvas')
 
 async function main() {
   const imgHeight = core.getInput("imgHeight", { required: true });
-  const txtFont = core.getInput("txtFont", { required: true });
   const txtFontSizeSong = core.getInput("txtFontSizeSong", { required: true });
   const txtFontSizeArtist = core.getInput("txtFontSizeArtist", { required: true });
   const txtMaxWidth = core.getInput("txtMaxWidth", { required: true });
@@ -67,10 +66,10 @@ async function main() {
     "{imgUrl}",
     "data:image/jpeg;base64," + imgBuffer.toString("base64")
   );
-  image = image.replace("{songName}", fitText(dataSong.name, txtFont, txtFontSizeSong, txtMaxWidth));
+  image = image.replace("{songName}", fitText(dataSong.name, "sans-serif", txtFontSizeSong, txtMaxWidth, true));
   image = image.replace(
     "{artistName}",
-    fitText(dataSong.artists.map((v) => v.name).join(", "), txtFont, txtFontSizeArtist, txtMaxWidth)
+    fitText(dataSong.artists.map((v) => v.name).join(", "), "sans-serif", txtFontSizeArtist, txtMaxWidth)
   );
 
   console.log("Remove old img file");
@@ -120,10 +119,10 @@ async function getDominantColor(buffer) {
   return Color.rgb(result);
 }
 
-function fitText(text, font, fontSize, maxWidth) {
+function fitText(text, font, fontSize, maxWidth, isBold = false) {
   const canvas = createCanvas(maxWidth, fontSize)
   const ctx = canvas.getContext('2d');
-  ctx.font = `bold ${fontSize}px ${font}`;
+  ctx.font = `${isBold ? 'bold' : ''} ${fontSize}px ${font}`;
   let ellipsis = false;
   while (true) {
       const currWidth = ctx.measureText(text + (ellipsis ? "..." : "")).width;

@@ -4,9 +4,6 @@ inputs:
   imgHeight:
     description: "Height of the image"
     required: true
-  txtFont:
-    description: "Font of the text label"
-    required: true
   txtFontSizeSong:
     description: "Font size for song name label"
     required: true
