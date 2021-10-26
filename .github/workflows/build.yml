@@ -19,7 +19,7 @@ jobs:
       - name: Install Node modules
         run: npm install
       - name: Install ncc
-        run: npm i -g @zeit/ncc
+        run: npm i -g @vercel/ncc
       - name: Build dist
         run: ncc build index.js
       - name: Commit file
