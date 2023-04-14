@@ -127,7 +127,7 @@ function fitText(text, font, fontSize, maxWidth, isBold = false) {
   while (true) {
       const currWidth = ctx.measureText(text + (ellipsis ? "..." : "")).width;
       if (currWidth <= maxWidth) {
-          return text + (ellipsis ? "..." : "")
+          return text.replace(/&/g, '&amp;') + (ellipsis ? "..." : "")
       }
       text = text.substring(0, text.length - 1)
       ellipsis = true
