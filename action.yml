@@ -29,5 +29,5 @@ inputs:
     description: "Spotify app client secret"
     required: true
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"
